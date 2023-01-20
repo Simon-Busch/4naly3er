@@ -3,6 +3,8 @@ import fs from 'fs';
 import { findAll } from 'solidity-ast/utils';
 import { ContractDefinition, SourceUnit } from 'solidity-ast';
 import { exec } from 'child_process';
+//!! added
+const fse = require("fs-extra");
 
 /**
  * @notice Returns the line corresponding to a character index in a file
@@ -112,3 +114,25 @@ export const getStorageVariable = (contract: ContractDefinition): string[] => {
   }
   return storageVariables;
 };
+
+// ?? seems OK
+export const downloadRepo = async (url:string, repoName:string) => {
+  await sh(`git clone ${url} contestRepo`);
+}
+//?? not needed ?
+export const readFile = (filePath: string) => {
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(data);
+  });
+}
+
+export const cleanUp = (directory: string) => {
+  fse.remove(directory, (err:any) => {
+    if (err) return console.error(err);
+    console.log(`Successfully deleted ${directory}`);
+  });
+}

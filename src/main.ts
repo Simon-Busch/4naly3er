@@ -3,13 +3,13 @@ import analyze from './analyze';
 import compileAndBuildAST from './compile';
 import issues from './issues';
 import { InputType, IssueTypes } from './types';
-import { recursiveExploration } from './utils';
+import { downloadRepo, recursiveExploration } from './utils';
 
-/*   .---. ,--.  ,--  / ,---.   ,--.   ,--.'  ,-. .----. ,------.,------, 
-    / .  | |   \ |  | | \ /`.\  |  |   `\ . '.' /\_.-,  ||  .---'|   /`. ' 
-   / /|  | |  . '|  |)'-'|_.' | |  |     \     /   |_  <(|  '--. |  |_.' | 
-  / '-'  |||  |\    |(|  .-.  |(|  '_     /   /) .-. \  ||  .--' |  .   .' 
-  `---|  |'|  | \   | |  | |  | |     |`-/   /`  \ `-'  /|  `---.|  |\  \  
+/*   .---. ,--.  ,--  / ,---.   ,--.   ,--.'  ,-. .----. ,------.,------,
+    / .  | |   \ |  | | \ /`.\  |  |   `\ . '.' /\_.-,  ||  .---'|   /`. '
+   / /|  | |  . '|  |)'-'|_.' | |  |     \     /   |_  <(|  '--. |  |_.' |
+  / '-'  |||  |\    |(|  .-.  |(|  '_     /   /) .-. \  ||  .--' |  .   .'
+  `---|  |'|  | \   | |  | |  | |     |`-/   /`  \ `-'  /|  `---.|  |\  \
     `--' `--'  `--' `--' `--' `-----'  `--'     `---'' `------'`--' '--' */
 
 // ============================== GENERATE REPORT ==============================
@@ -30,6 +30,23 @@ const main = async (
 ) => {
   let result = '# Report\n\n';
   let fileNames: string[] = [];
+
+  // ?? seems OK
+  if (basePath.includes("https://github.com/")) {
+    const repoUrl = basePath.replace(/\/$/, "");
+    const contestName = basePath.split(
+      `https://github.com/code-423n4/`
+      )[1].replace("/","");
+    const repoName = contestName.replace(".git", "");
+    downloadRepo(repoUrl, repoName);
+    // fs.rename(`${contestName.replace(".git", "")}`, 'contest', (err) => {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   console.log('Folder renamed successfully.');
+    // });
+    basePath = `../${contestName.replace('.git',"")}/src/` // not the best here
+  }
 
   if (!!scopeFile || !!scope) {
     // Scope is specified in a .txt file or is passed in a string
@@ -53,7 +70,6 @@ const main = async (
   // fileNames.forEach(fileName => {
   //   result += ` - ${fileName}\n`;
   // });
-
   // Read file contents and build AST
   const files: InputType = [];
   const asts = await compileAndBuildAST(basePath, fileNames);

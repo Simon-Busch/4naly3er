@@ -25,6 +25,7 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-standard": "5.0.0",
+    "fs-extra": "^11.1.0",
     "prettier": "^2.7.1",
     "semver": "^7.3.8",
     "solc": "^0.8.17",
